@@ -6,9 +6,12 @@ use App\Core\Model;
 
 class Form
 {
-    
-    public static function begin($action = "", $method = "GET")
+    protected static Model $model;
+
+    public static function begin($action = "", $method = "GET", Model $model = null)
     {
+        self::$model = $model;
+
         echo "<form action=\"{$action}\" method=\"{$method}\">";
 
         return new self;
@@ -19,8 +22,8 @@ class Form
         echo "</form>";
     }
 
-    public function field(Model $model, $attribute) 
+    public function field($attribute, $type = "text")
     {
-        return new Field($model, $attribute);
+        return new Field(self::$model, $attribute, $type);
     }
 }

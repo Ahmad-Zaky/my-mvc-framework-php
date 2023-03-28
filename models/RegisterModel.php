@@ -6,11 +6,11 @@ use App\Core\Model;
 
 class RegisterModel extends Model
 {
-    public string $first_name;
-    public string $last_name;
-    public string $email;
-    public string $password;
-    public string $password_confirmation;
+    public string $first_name = "";
+    public string $last_name = "";
+    public string $email = "";
+    public string $password = "";
+    public string $password_confirmation = "";
 
     public function register() 
     {

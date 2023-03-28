@@ -1,13 +1,17 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use App\controllers\SiteController;
 use App\controllers\AuthController;
 use App\Core\Application;
 
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 
-$app = new Application(dirname(__DIR__));
+$config = require_once dirname(__DIR__) . '/config.php';
+
+$app = new Application(dirname(__DIR__), $config);
 
 $app->router->get("/callback", function () {
     return 'Hello World';
