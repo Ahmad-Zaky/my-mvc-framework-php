@@ -2,6 +2,7 @@
 
 namespace App\controllers;
 
+use App\Core\Application;
 use App\Core\Controller;
 use App\Core\Request;
 
@@ -9,7 +10,7 @@ class SiteController extends Controller
 {
     public function home() 
     {
-        $params = ["name" => "Ahmed"];
+        $params = ["name" => Application::$app->authName()];
 
         return $this->render('home', $params);
     }

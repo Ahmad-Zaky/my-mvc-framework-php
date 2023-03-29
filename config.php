@@ -1,6 +1,9 @@
 <?php
 
+use App\models\User;
+
 return [
+    "authClass" => User::class,
     "db" => [
         "dsn" => $_ENV["DB_DSN"],
         "connection" => $_ENV["DB_CONNECTION"],

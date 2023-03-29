@@ -23,6 +23,12 @@ class Application
     public Database $db;
     
     public Migration $migration;
+    
+    public Session $session;
+
+    public ?DBModel $auth;
+
+    public string $authClass;
 
     public function __construct($rootPath, array $config) 
     {
@@ -35,10 +41,51 @@ class Application
         $this->config = $config;
         $this->db = new Database($config["db"]);
         $this->migration = new Migration;
+        $this->session = new Session;
+        $this->authClass = $config["authClass"];
+        $this->auth = null;
+        
+        if ($primaryValue = $this->session->get('auth')) {
+            $primaryKey = (new $this->authClass)->primaryKey();
+            $this->auth = (new $this->authClass)->findOne([$primaryKey => $primaryValue]);
+        }
+
     }
 
     public function run() 
     {
         echo $this->router->resolve();
+    }
+
+    public function authName() 
+    {
+        return $this->auth ? $this->auth->name() : "Guest";
+    }
+
+    public function login(DBModel $auth) 
+    {
+        $this->auth = $auth;
+        $primaryKey = $auth->primaryKey();
+        $primaryValue = $auth->{$primaryKey};
+        $this->session->set('auth', $primaryValue);
+
+        return true;
+    }
+
+    public function logout() 
+    {
+        $this->auth = null;
+        $this->session->remove('auth');
+        return true;
+    }
+
+    public static function auth() 
+    {
+        return self::$app->auth;
+    }
+
+    public static function guest() 
+    {
+        return ! self::auth();
     }
 }

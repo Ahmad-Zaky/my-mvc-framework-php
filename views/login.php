@@ -1,17 +1,10 @@
 <h1>Login</h1>
 
-<form method="POST">
+<?php $form = \App\Core\Form\Form::begin('', "POST", $model); ?>
 
-    <div class="form-group my-2">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp" placeholder="Enter email">
-    </div>
-
-    <div class="form-group my-2">
-        <label for="email">Password</label>
-        <input type="password" class="form-control" name="password" id="password">
-    </div>
-
+    <?= $form->field("email")->email() ?>
+    <?= $form->field("password")->password() ?>
+    
     <button type="submit" class="btn btn-primary">Submit</button>
 
-</form>
+<?= \App\Core\Form\Form::end(); ?>

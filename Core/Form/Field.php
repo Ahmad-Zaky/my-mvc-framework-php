@@ -32,9 +32,9 @@ class Field
                     %s
                 </div>
             ',
-            ucfirst(str_replace("_", " ", $this->attribute)),
+            $this->label(),
             $this->type,
-            $this->model->hasErrors("first_name") ? 'is-invalid' : '',
+            $this->model->hasErrors($this->attribute) ? 'is-invalid' : '',
             $this->model->{$this->attribute} ?? "",
             $this->attribute,
             $this->attribute,
@@ -59,7 +59,7 @@ class Field
     protected function showErrors()
     {
         $errors = "";
-        foreach ($this->model->errors[$this->attribute] as $error) {
+        foreach ($this->model->errors[$this->attribute] ?? [] as $error) {
             $errors .= "<li>{$error}</li>";
         }
 
@@ -68,5 +68,10 @@ class Field
                 <ul> {$errors} </ul>
             </div>
         ";
+    }
+
+    public function label() 
+    {
+        return $this->model->labels($this->attribute);
     }
 }

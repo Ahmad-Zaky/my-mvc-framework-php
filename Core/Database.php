@@ -23,6 +23,11 @@ class Database
         return $this->pdo;
     }
 
+    public function prepare($sql)
+    {
+        return $this->pdo->prepare($sql);
+    }
+
     public function migrate()
     {
         return Application::$app->migration->migrate();

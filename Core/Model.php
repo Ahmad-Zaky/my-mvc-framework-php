@@ -9,6 +9,7 @@ abstract class Model
     const RULE_MIN = "min";
     const RULE_MAX = "max";
     const RULE_MATCH = "match";
+    const RULE_UNIQUE = "unique";
     
     public array $errors = [];
 
@@ -50,7 +51,22 @@ abstract class Model
 
                 // Match
                 if ($ruleName === self::RULE_MATCH && $value !== $this->{$rule["match"]}) {
+                    $rule["match"] = $this->labels($rule["match"]);
                     $this->addError($attribute, self::RULE_MATCH, $rule);
+                }
+
+                // Unique
+                if ($ruleName === self::RULE_UNIQUE) {
+                    $class = $rule["class"];
+                    $table = ($class)::tableName();
+                    
+                    $statement = self::prepare("SELECT * FROM {$table} WHERE {$attribute} = :{$attribute}");
+                    $statement->bindValue(":{$attribute}", $value);
+                    $statement->execute();
+                    if ($statement->fetchObject()) {
+                        $this->addError($attribute, self::RULE_UNIQUE, ["field" => $this->labels($attribute)]);
+                    }
+
                 }
             }
         }
@@ -58,10 +74,19 @@ abstract class Model
         return empty($this->errors);
     }
 
-    public function addError(string $attribute, string $rule, $params = NULL)
+    public function addError(string $attribute, string $rule, $params = [])
     {
         $message = $this->errorMessages()[$rule] ?? '';
 
+        foreach ($params as $key => $value) {
+            $message = str_replace("{{$key}}", $value, $message);
+        }
+
+        $this->errors[$attribute][] = $message;
+    }
+
+    public function addErrorMessage(string $attribute, string $message, $params = [])
+    {
         foreach ($params as $key => $value) {
             $message = str_replace("{{$key}}", $value, $message);
         }
@@ -77,6 +102,7 @@ abstract class Model
             self::RULE_MIN => "Min length must be at least {min}",
             self::RULE_MAX => "Max length must be at most {max}",
             self::RULE_MATCH => "This field must be the same as {match}",
+            self::RULE_UNIQUE => "{field} already exists",
         ];
     }
 
@@ -90,5 +116,12 @@ abstract class Model
         return $this->errors[$attribute][0] ?? false;
     }
 
+    public static function prepare($sql)
+    {
+        return Application::$app->db->connection()->prepare($sql);
+    }
+
     abstract public function rules(): array;
+    
+    abstract public function labels(string $key = NULL): array|string;
 }

@@ -6,7 +6,7 @@ use App\Core\Model;
 
 class Form
 {
-    protected static Model $model;
+    protected static ?Model $model;
 
     public static function begin($action = "", $method = "GET", Model $model = null)
     {
