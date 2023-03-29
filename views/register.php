@@ -4,16 +4,16 @@
 
 <div class="row">
     <div class="col">
-        <?= $form->field("first_name") ?>
+        <?= $form->input("first_name") ?>
     </div>
     <div class="col">
-        <?= $form->field("last_name") ?>
+        <?= $form->input("last_name") ?>
     </div>
 </div>
 
-<?= $form->field("email")->email() ?>
-<?= $form->field("password")->password() ?>
-<?= $form->field("password_confirmation")->password() ?>
+<?= $form->input("email")->email() ?>
+<?= $form->input("password")->password() ?>
+<?= $form->input("password_confirmation")->password() ?>
 
 <button type="submit" class="btn btn-primary">Submit</button>
 

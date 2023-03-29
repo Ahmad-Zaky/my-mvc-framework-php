@@ -22,8 +22,13 @@ class Form
         echo "</form>";
     }
 
-    public function field($attribute, $type = "text")
+    public function input($attribute, $type = "text")
     {
-        return new Field(self::$model, $attribute, $type);
+        return new InputField(self::$model, $attribute, $type);
+    }
+
+    public function textarea($attribute, $type = "text")
+    {
+        return new TextareaField(self::$model, $attribute, $type);
     }
 }

@@ -1,59 +1,40 @@
 <?php
-
 namespace App\Core\Form;
 
 use App\Core\Model;
 
-class Field
+abstract class BaseField
 {
     public Model $model;
 
     public string $attribute;
 
-    public string $type;
-
-    const TYPE_TEXT = 'text';
-    const TYPE_EMAIL = 'email';
-    const TYPE_PASSWORD = 'password';
-
     function __construct(Model $model, string $attribute)
     {
         $this->model = $model;
         $this->attribute = $attribute;
-        $this->type = self::TYPE_TEXT;
     }
 
+    abstract public function renderField();
+    
     function __toString()
     {
         return sprintf('
                 <div class="form-group my-2">
                     <label for="email">%s</label>
-                    <input type="%s" class="form-control %s" value="%s" name="%s" id="%s">
+                    %s
                     %s
                 </div>
             ',
             $this->label(),
-            $this->type,
-            $this->model->hasErrors($this->attribute) ? 'is-invalid' : '',
-            $this->model->{$this->attribute} ?? "",
-            $this->attribute,
-            $this->attribute,
+            $this->renderField(),
             $this->showErrors()
         );
     }
 
-    public function email() 
+    public function label() 
     {
-        $this->type = self::TYPE_EMAIL;
-        
-        return $this;
-    }
-
-    public function password()
-    {
-        $this->type = self::TYPE_PASSWORD;
-        
-        return $this;
+        return $this->model->labels($this->attribute);
     }
 
     protected function showErrors()
@@ -68,10 +49,5 @@ class Field
                 <ul> {$errors} </ul>
             </div>
         ";
-    }
-
-    public function label() 
-    {
-        return $this->model->labels($this->attribute);
     }
 }

@@ -46,11 +46,16 @@ class AuthController extends Controller
         return $this->render("register", ["model" => $user]);
     }
 
-    public function logout(Request $request, Response $response) 
+    public function logout(Response $response)
     {
         $auth = new Auth;
         if ($auth->logout()) {
             return $response->redirect("/");
         }
+    }
+
+    public function profile() 
+    {
+        return $this->render("profile");
     }
 }

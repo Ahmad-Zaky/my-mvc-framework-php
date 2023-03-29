@@ -16,7 +16,7 @@ class Application
     
     public Router $router;
 
-    public Controller $controller;
+    public ?Controller $controller;
     
     public array $config;
     
@@ -29,6 +29,8 @@ class Application
     public ?DBModel $auth;
 
     public string $authClass;
+
+    public string $layout = 'main';
 
     public function __construct($rootPath, array $config) 
     {
@@ -44,7 +46,8 @@ class Application
         $this->session = new Session;
         $this->authClass = $config["authClass"];
         $this->auth = null;
-        
+        $this->controller = null;
+
         if ($primaryValue = $this->session->get('auth')) {
             $primaryKey = (new $this->authClass)->primaryKey();
             $this->auth = (new $this->authClass)->findOne([$primaryKey => $primaryValue]);
@@ -54,7 +57,14 @@ class Application
 
     public function run() 
     {
-        echo $this->router->resolve();
+        try {
+            echo $this->router->resolve();
+        } catch (\Exception $e) {
+            $this->response->setStatusCode($e->getCode());
+            echo $this->router->renderView("_error", [
+                'exception' => $e
+            ]);
+        }
     }
 
     public function authName() 
